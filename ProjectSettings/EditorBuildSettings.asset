@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DungeonRooms/BasementStart.unity
     guid: e1f9f8fb29d5a0040a6d83ff85f2f668
+  - enabled: 1
+    path: Assets/Scenes/DungeonRooms/UpgradeRoom.unity
+    guid: ed518c81dfecf1545acab8d9033a24b4
   m_configObjects: {}

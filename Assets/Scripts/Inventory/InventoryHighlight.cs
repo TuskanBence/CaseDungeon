@@ -18,8 +18,6 @@ public class InventoryHighligth : MonoBehaviour
     }
     public void SetPosition(ItemGrid targetGrid, Case targetItem)
     {
-        Debug.Log(targetItem.onGridPositionX);
-        Debug.Log(targetItem.onGridPositionY);
         Vector2 pos = targetGrid.CalculatePositionOnGrid(targetItem, targetItem.onGridPositionX, targetItem.onGridPositionY);
 
         highligther.localPosition = pos;

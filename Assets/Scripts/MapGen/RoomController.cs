@@ -102,19 +102,13 @@ public class RoomController : MonoBehaviour
        
         
     }
-    void Start()
-    {
-       // LoadRoom("Empty", 0, 0);
-       // LoadRoom("Empty", 1, 0);
-       // LoadRoom("Empty", -1, 0);
-        //LoadRoom("Empty", 0, -1);
-        //LoadRoom("Empty", 0, 1);
-    }
+    
 
     // Update is called once per frame
     void Update()
     {
         UpdateRoomQueue();
+       
     }
     //Checks if there are rooms to load if there are it starts to load them
     void UpdateRoomQueue()

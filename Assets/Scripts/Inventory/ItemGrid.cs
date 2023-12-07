@@ -12,7 +12,6 @@ public class ItemGrid : MonoBehaviour
     public const int  tileSizeWidht = 32;
    public  const int  tileSizeHeight = 32;
 
-    InventoryItem[,] inventoryitemSlot;
    public Case[,] inventoryitemSlotCase;
     RectTransform rectTransform;
     [SerializeField] public int gridSizeWidth;
@@ -23,17 +22,15 @@ public class ItemGrid : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         Init(gridSizeWidth, gridSizeHeight);
-
-
-
+        this.gameObject.SetActive(false);
     }
     public void Init(int width,int height)
     {
-        inventoryitemSlot = new InventoryItem[width,height];
         inventoryitemSlotCase = new Case[width,height];
         Vector2 size = new Vector2(width*tileSizeWidht,height*tileSizeHeight);
         rectTransform.sizeDelta = size;
     }
+
     Vector2 positionOnTheGrid = new Vector2 (); 
     Vector2Int tileGridPosition  = new Vector2Int (); 
     public Vector2Int GetTileGridPosition(Vector2 mousePosition)
@@ -92,48 +89,14 @@ public class ItemGrid : MonoBehaviour
 
         /**/
     }
-
-    private bool CheckAvaiableSpace(int posX, int posY, int width, int height)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                if (inventoryitemSlot[posX+x,posY+y] != null){ return false;   }
-            }
-
-        }
-        return true;
-    }
     private bool CheckAvaiableSpaceCase(int posX, int posY, int width, int height)
     {
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
+                Debug.Log(inventoryitemSlotCase);
                 if (inventoryitemSlotCase[posX + x, posY + y] != null) { return false; }
-            }
-
-        }
-        return true;
-    }
-    private bool OverlapCheck(int posX, int posY, int width, int height,ref InventoryItem overlapItem)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                if (inventoryitemSlot[posX + x, posY + y] != null) 
-                {
-                    overlapItem = inventoryitemSlot[posX + x, posY + y];
-                }
-                else
-                {
-                    if (overlapItem != inventoryitemSlot[posX + x, posY + y])
-                    {
-                        return false;
-                    }
-                }
             }
 
         }
@@ -162,35 +125,14 @@ public class ItemGrid : MonoBehaviour
         }
         return true;
     }
-    public InventoryItem PickUpItem(int x, int y)
-    {
-        InventoryItem toReturn = inventoryitemSlot[x, y];
-        if (toReturn == null) { return null; }
-
-        CleanGridReference(toReturn);
-
-        return toReturn;
-    }
     public Case PickUpCase(int x, int y)
     {      
         Case toReturn = inventoryitemSlotCase[x, y];
         if (toReturn == null) { return null; }
-
         CleanGridReference(toReturn);
         return toReturn;
     }
-
-    private void CleanGridReference(InventoryItem item)
-    {
-        for (int ix = 0; ix < item.itemData.width; ix++)
-        {
-            for (int iy = 0; iy < item.itemData.height; iy++)
-            {
-                inventoryitemSlot[item.onGridPositionX + ix, item.onGridPositionY + iy] = null;
-            }
-        }
-    }
-    private void CleanGridReference(Case item)
+    public void CleanGridReference(Case item)
     {
         for (int ix = 0; ix < (int)item.caseSize; ix++)
         {
@@ -231,30 +173,10 @@ public class ItemGrid : MonoBehaviour
 
         return true;
     }
-
-    public InventoryItem GetItem(int x, int y)
-    {
-        return inventoryitemSlot[x, y];
-    }
         public Case GetCase(int x, int y)
         {
             return inventoryitemSlotCase[x, y];
         }
-
-        public Vector2Int? FindSpaceForObject(InventoryItem itemToInsert)
-    {
-        for (int x = 0; x<gridSizeWidth-itemToInsert.itemData.width+1;x++)
-        {
-            for (int y = 0; y < gridSizeHeight-itemToInsert.itemData.height+1; y++)
-            {
-                if (CheckAvaiableSpace(x, y, itemToInsert.itemData.width, itemToInsert.itemData.height))
-                {
-                    return new Vector2Int(x, y);
-                }
-            }
-        }
-        return null;
-    }
     public Vector2Int? FindSpaceForObject(Case itemToInsert)
     {
         int width = gridSizeWidth - (int)itemToInsert.caseSize + 1;

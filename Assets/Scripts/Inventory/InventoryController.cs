@@ -2,13 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
+
+
 
 public class InventoryController : MonoBehaviour
 {
     [SerializeField] public ItemGrid selectedItemGrid;
+    public TextMeshProUGUI info;
+    public TextMeshProUGUI money;
     public static InventoryController instance;
     InventoryItem selectedItem;
     Case selectedCase;
@@ -26,22 +32,37 @@ public class InventoryController : MonoBehaviour
 
     InventoryHighligth inventoryHighligth;
 
-   
+
 
     private void Awake()
     {
+        DontDestroyOnLoad(this);
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         inventoryHighligth = GetComponent<InventoryHighligth>();
-        instance = this;
         InventoryActive = false;
-        ShowInventory(InventoryActive);
-        ShowInventory(InventoryActive);
+
     }
     private void Update()
     {
+        if (Player.playerInstance.isInShopArea)
+        {
+            info.gameObject.SetActive(true);
+        }
+        else
+        {
+            info.gameObject.SetActive(false);
+         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ShowInventory(InventoryActive);
-            
+
         }
         if (!InventoryActive)
         {
@@ -59,6 +80,10 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    public void UpdateMoney(int amount)
+    {
+        money.text = "Money: " + amount;
+    }
     private void ShowInventory(bool inventoryActive)
     {
         InventoryActive = !InventoryActive;
@@ -68,11 +93,11 @@ public class InventoryController : MonoBehaviour
     public bool OutOfBounds()
     {
         Vector2Int positionOnGrid = GetTileGridPosition();
-        return positionOnGrid.x > selectedItemGrid.gridSizeWidth - 1 || positionOnGrid.y > selectedItemGrid.gridSizeHeight - 1 || positionOnGrid.y<0 || positionOnGrid.x<0;
+        return positionOnGrid.x > selectedItemGrid.gridSizeWidth - 1 || positionOnGrid.y > selectedItemGrid.gridSizeHeight - 1 || positionOnGrid.y < 0 || positionOnGrid.x < 0;
     }
-    public  void InsertCaseS(Case insert)
+    public void InsertCaseS(Case insert)
     {
-       
+
         Case itemToInsert = insert;
         selectedCase = null;
         InsertCase(insert);
@@ -89,9 +114,10 @@ public class InventoryController : MonoBehaviour
         Vector2Int positionOnGrid = GetTileGridPosition();
         if (selectedCase == null)
         {
-            if (!OutOfBounds()) { 
-            CaseToHighlight = selectedItemGrid.GetCase(positionOnGrid.x, positionOnGrid.y); 
-             }
+            if (!OutOfBounds())
+            {
+                CaseToHighlight = selectedItemGrid.GetCase(positionOnGrid.x, positionOnGrid.y);
+            }
             if (CaseToHighlight != null)
             {
                 // inventoryHighligth.SetParent(selectedItemGrid);
@@ -107,36 +133,20 @@ public class InventoryController : MonoBehaviour
         else
         {
             // inventoryHighligth.SetParent(selectedItemGrid);
-            Debug.Log(positionOnGrid);
             inventoryHighligth.Show(selectedItemGrid.BoundryCheck(positionOnGrid.x, positionOnGrid.y, (int)selectedCase.caseSize, (int)selectedCase.caseSize));
             inventoryHighligth.SetSize(selectedCase);
             inventoryHighligth.SetPosition(selectedItemGrid, selectedCase, positionOnGrid.x, positionOnGrid.y);
         }
     }
-
-    private void CreateRandomItem()
-    {
-      InventoryItem item = Instantiate(itemPrefab).GetComponent<InventoryItem>();
-        selectedItem = item;
-        rectTransform = item.GetComponent<RectTransform>();
-        rectTransform.SetParent(canvasTranform);
-
-        int selectedItemID = UnityEngine.Random.Range(0, items.Count);
-        item.Set(items[selectedItemID]);
-    }
-
     private void LeftMouseButtonPress()
     {
         Vector2Int tileGridPosition = GetTileGridPosition();
         if (selectedCase == null)
         {
-           PickUpCase(tileGridPosition);
-           // PickUpItem(tileGridPosition);
-            
+            PickUpCase(tileGridPosition);
         }
         else
         {
-            //PlaceItem(tileGridPosition);
             PlaceCase(tileGridPosition);
         }
     }
@@ -154,6 +164,22 @@ public class InventoryController : MonoBehaviour
     }
     private void PlaceCase(Vector2Int tileGridPosition)
     {
+        if (OutOfBounds())
+        {
+
+            Vector2 dropPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Debug.Log(dropPosition);
+
+
+            selectedCase.gameObject.transform.SetParent(null);
+            selectedCase.gameObject.transform.position = dropPosition;
+            Inventory.Instance.Remove(selectedCase);
+            selectedCase = null;
+           
+
+            Debug.Log("drop case");
+            return;
+        }
         bool complete = selectedItemGrid.PlaceItem(selectedCase, tileGridPosition.x, tileGridPosition.y, ref overlapCase);
 
         if (complete)
@@ -166,16 +192,6 @@ public class InventoryController : MonoBehaviour
                 rectTransform = selectedCase.GetComponent<RectTransform>();
             }
         }
-
-    }
-
-    private void PickUpItem(Vector2Int tileGridPosition)
-    {
-        selectedItem = selectedItemGrid.PickUpItem(tileGridPosition.x, tileGridPosition.y);
-        if (selectedItem != null)
-        {
-            rectTransform = selectedItem.GetComponent<RectTransform>();
-        }
     }
     private void PickUpCase(Vector2Int tileGridPosition)
     {
@@ -184,6 +200,7 @@ public class InventoryController : MonoBehaviour
             return;
         }
         selectedCase = selectedItemGrid.PickUpCase(tileGridPosition.x, tileGridPosition.y);
+        Debug.Log(selectedCase.caseValue);
         if (selectedCase != null)
         {
             rectTransform = selectedCase.GetComponent<RectTransform>();
@@ -196,10 +213,10 @@ public class InventoryController : MonoBehaviour
         {
             rectTransform.position = Input.mousePosition;
         }
-      
+
     }
     private void ItemIconDragCase()
-    { 
+    {
         if (selectedCase != null)
         {
             rectTransform.position = Input.mousePosition;

@@ -65,7 +65,6 @@ public class CaseGenerator : MonoBehaviour
     private void Start()
     {
         int randomValue = GetWeightedRandomValue();
-        Debug.Log("Random Value: " + randomValue);
         for (int i = 0; i < randomValue; i++)
         {
             CaseData randomCase = GenerateRandomCase();
@@ -81,7 +80,6 @@ public class CaseGenerator : MonoBehaviour
            spawnPoint.position.x + UnityEngine.Random.Range(-rangeSize.x / 2f, rangeSize.x / 2f),
            spawnPoint.position.y + UnityEngine.Random.Range(-rangeSize.y / 2f, rangeSize.y / 2f)
        );
-        Debug.Log(randomPosition);
         // Instantiate the case prefab at the spawn point
         GameObject caseObject = Instantiate(casePrefab, randomPosition, Quaternion.identity);
         caseObject.transform.SetParent(spawnPoint.transform);

@@ -7,7 +7,7 @@ using UnityEngine;
 public class Room : MonoBehaviour
 {
     bool playin;
-    bool cleared;
+   public bool cleared;
     public int Width;
     public int Height;
     public int Y;
@@ -86,9 +86,10 @@ public class Room : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag.CompareTo("Player") == 0)
-        {
+        { 
             RoomController.instance.OnPlayerEnterRoom(this);
-            playin = true; if (!cleared)
+            playin = true; 
+            if (!cleared)
             {
                 doorControll(true);
             }
@@ -98,6 +99,7 @@ public class Room : MonoBehaviour
                 {
                     EnemyAI e = item.gameObject.GetComponent<EnemyAI>();
                     e.setRoom(this);
+                    e.setPlayer(other.gameObject.transform);
                     enemies.Add(e);
                 }
 
