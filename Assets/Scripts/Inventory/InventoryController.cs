@@ -168,16 +168,12 @@ public class InventoryController : MonoBehaviour
         {
 
             Vector2 dropPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Debug.Log(dropPosition);
-
-
             selectedCase.gameObject.transform.SetParent(null);
             selectedCase.gameObject.transform.position = dropPosition;
+            RoomController.instance.getCurrentRoom().cases.Add(selectedCase);
             Inventory.Instance.Remove(selectedCase);
             selectedCase = null;
-           
-
-            Debug.Log("drop case");
+          
             return;
         }
         bool complete = selectedItemGrid.PlaceItem(selectedCase, tileGridPosition.x, tileGridPosition.y, ref overlapCase);
@@ -200,7 +196,6 @@ public class InventoryController : MonoBehaviour
             return;
         }
         selectedCase = selectedItemGrid.PickUpCase(tileGridPosition.x, tileGridPosition.y);
-        Debug.Log(selectedCase.caseValue);
         if (selectedCase != null)
         {
             rectTransform = selectedCase.GetComponent<RectTransform>();

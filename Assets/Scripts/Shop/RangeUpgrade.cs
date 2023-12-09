@@ -26,7 +26,7 @@ public class RangeUpgrade : MonoBehaviour
     {
         Debug.Log("Range upgraded");
         Debug.Log(PlayerStatsManager.instance.getPlayerRange());
-        PlayerStatsManager.instance.setPlayerRange(2);
+        PlayerStatsManager.instance.addPlayerRange(2);
         Player.playerInstance.currentMoney -= price;
         price += 50;
         Player.playerInstance.refreshStats();

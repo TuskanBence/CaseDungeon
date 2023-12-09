@@ -50,6 +50,11 @@ public class EnemyGenerator : MonoBehaviour
 
     private void Start()
     {
+        
+    }
+
+    public void GenerateEnemies()
+    {
         int randomValue = GetWeightedRandomValue();
         for (int i = 0; i < randomValue; i++)
         {

@@ -64,15 +64,18 @@ public class CaseGenerator : MonoBehaviour
 
     private void Start()
     {
+        
+    }
+    public void SpawnCases()
+    {
         int randomValue = GetWeightedRandomValue();
         for (int i = 0; i < randomValue; i++)
         {
             CaseData randomCase = GenerateRandomCase();
-            SpawnCase(randomCase);
+            spawnRandomCase(randomCase);
         }
     }
-
-    private void SpawnCase(CaseData newCase)
+    private void spawnRandomCase(CaseData newCase)
     {
         
         Vector2 rangeSize = spawnPoint.GetComponent<SpriteRenderer>().bounds.size;
@@ -81,10 +84,15 @@ public class CaseGenerator : MonoBehaviour
            spawnPoint.position.y + UnityEngine.Random.Range(-rangeSize.y / 2f, rangeSize.y / 2f)
        );
         // Instantiate the case prefab at the spawn point
+        Room r = spawnPoint.GetComponentInParent<Room>();
         GameObject caseObject = Instantiate(casePrefab, randomPosition, Quaternion.identity);
         caseObject.transform.SetParent(spawnPoint.transform);
         // Access the CaseComponent script on the instantiated object
         Case caseComponent = caseObject.GetComponent<Case>();
         caseComponent.Initialize(newCase);
+        caseComponent.transformX = randomPosition.x;
+        caseComponent.transformY = randomPosition.y;
+        r.cases.Add(caseComponent); 
     }
+   
 }

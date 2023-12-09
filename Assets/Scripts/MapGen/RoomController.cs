@@ -5,15 +5,29 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using static GameData;
+using Unity.VisualScripting;
 
+[System.Serializable]
 public class RoomInfo
 {
     public string name;
     public int X; // Location from start room
     public int Y;
+    public bool fromSave;
+    public bool cleared;
+    public List<CaseData> cases;
+    public RoomInfo(string name, int x, int y)
+    {
+        this.name = name;
+        X = x;
+        Y = y;
+        cases=new List<CaseData>();
+        cleared = false;
+    }
 }
 
-public class RoomController : MonoBehaviour
+public class RoomController : MonoBehaviour,IDataPersistence
 {
     public static RoomController instance;
     Room currentRoom;
@@ -21,9 +35,9 @@ public class RoomController : MonoBehaviour
     string currentWorldName = "Basement";
 
     RoomInfo currentLoadRoomData;
-
     Queue<RoomInfo> loadRoomQueue = new Queue<RoomInfo>();
     public List<Room> loadedRooms = new List<Room>();
+    public List<RoomInfo> potencialrooms = new List<RoomInfo>();
 
     bool isLoadingRoom = false;
     bool spawnedBossRoom = false;
@@ -33,6 +47,10 @@ public class RoomController : MonoBehaviour
     {
         instance = this;
 
+    }
+    public Room getCurrentRoom()
+    {
+        return currentRoom;
     }
     //Checks if a specific room exisits based on cordinates
     public bool DoesRoomExist(int x, int y)
@@ -50,18 +68,17 @@ public class RoomController : MonoBehaviour
         currentRoom = room;
     }
     //Creates a room and places it inside a queue
-    public void LoadRoom(string name, int x, int y)
+    public void LoadRoom(RoomInfo newroom)
     {
-        if (DoesRoomExist(x, y))
+        if (DoesRoomExist(newroom.X, newroom.Y))
         {
             return;
         }
-        RoomInfo newRoomData = new RoomInfo();
-        newRoomData.name = name;
-        newRoomData.X = x;
-        newRoomData.Y = y;
-
-        loadRoomQueue.Enqueue(newRoomData);
+        loadRoomQueue.Enqueue(newroom);
+    }
+    public void addRoom(RoomInfo r)
+    {
+        potencialrooms.Add(r);
     }
     //Loads the rooms into the main scene
     IEnumerator LoadRoomRoutine(RoomInfo info)
@@ -79,28 +96,34 @@ public class RoomController : MonoBehaviour
     {
         if (!DoesRoomExist(currentLoadRoomData.X, currentLoadRoomData.Y))
         {
-            room.transform.position = new Vector3(currentLoadRoomData.X * room.Width, currentLoadRoomData.Y * room.Height, 0); 
-       
+            room.transform.position = new Vector3(currentLoadRoomData.X * room.Width, currentLoadRoomData.Y * room.Height, 0);
+
             room.X = currentLoadRoomData.X;
             room.Y = currentLoadRoomData.Y;
-            room.name = currentWorldName + "-" + currentLoadRoomData.name + " " + room.X + ", " + room.Y;
+            // room.name = currentWorldName + "-" + currentLoadRoomData.name + " " + room.X + ", " + room.Y;
+            room.name = currentLoadRoomData.name;
             room.transform.parent = transform;
-
+            foreach (CaseData c in currentLoadRoomData.cases)
+            {
+                Case newCase = Inventory.Instance.CreateCase(c, new Vector2(c.locationX, c.locationY));
+               newCase.transform.SetParent(room.transform);
+                newCase.transform.position=new Vector2(c.locationX,c.locationY);
+                room.cases.Add(newCase);
+            }
             isLoadingRoom = false;
             if (loadedRooms.Count == 0)
             {
                 CameraController.instance.currentRoom = room;
             }
+            room.cleared = currentLoadRoomData.cleared;
+            room.fromSave=currentLoadRoomData.fromSave;
             loadedRooms.Add(room);
         }
         else
         {
             Destroy(room.gameObject);
             isLoadingRoom = false;
-        }
-       
-       
-        
+        } 
     }
     
 
@@ -113,6 +136,7 @@ public class RoomController : MonoBehaviour
     //Checks if there are rooms to load if there are it starts to load them
     void UpdateRoomQueue()
     {
+       
         if (isLoadingRoom) { return; }
         if (loadRoomQueue.Count == 0) {
             if (!spawnedBossRoom)
@@ -145,9 +169,57 @@ public class RoomController : MonoBehaviour
             Destroy(bossRoom.gameObject);
             var roomToRemove = loadedRooms.Single(r => r.X == temproom.X && r.Y == temproom.Y);
             loadedRooms.Remove(roomToRemove);
-            LoadRoom("End", temproom.X, temproom.Y);
+            LoadRoom(new RoomInfo("End", temproom.X, temproom.Y));
 
         }
     }
-   
+
+    public void LoadData(GameData data)
+    {
+        if (data.rooms.Count==0||data.fromShop)
+        {
+          foreach (RoomInfo c in potencialrooms)
+            {
+                c.fromSave = false;
+                LoadRoom(c);
+            }
+        }
+        else
+        { 
+            foreach (savedRoom currRoom in data.rooms)
+            {
+                currRoom.room.fromSave = true; 
+                LoadRoom(currRoom.room);
+            }
+        }
+       
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.rooms.Clear();
+        foreach (Room currRoom in loadedRooms)
+        {
+            savedRoom s;
+            s.room = new RoomInfo(currRoom.name, currRoom.X, currRoom.Y);
+            s.room.cleared = currRoom.cleared;
+            foreach (Case c in currRoom.cases)
+            {
+                CaseData newCase = new CaseData();
+                newCase.caseValue = c.caseValue;
+                newCase.caseRarity = c.caseRarity;
+                newCase.caseWeight = c.caseWeight;
+                newCase.caseSize = c.caseSize;
+                newCase.locationX = c.transformX;
+                newCase.locationY = c.transformY;
+                s.room.cases.Add(newCase);
+            }
+
+            s.enemies = new List<EnemyAI>();
+            s.enemies.AddRange(currRoom.enemies);
+            data.rooms.Add(s); 
+            
+        }
+
+    }
 }

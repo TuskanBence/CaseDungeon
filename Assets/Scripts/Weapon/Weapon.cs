@@ -79,7 +79,6 @@ public class Weapon : MonoBehaviour
     private void shoot()
     {
         GameObject bulletIns = Instantiate(bulett, shootPoint.position, Quaternion.identity);
-        bulletIns.transform.SetParent(shootPoint);
         bulletIns.GetComponent<Rigidbody2D>().AddForce(direction * force);
     }
     void OnDrawGizmosSelected()

@@ -8,6 +8,7 @@ public class CasePickup : MonoBehaviour
     {
         Case c = gameObject.GetComponent<Case>(); 
         InventoryController.instance.InsertCaseS(c);
+        RoomController.instance.getCurrentRoom().cases.Remove(c);
         Inventory.Instance.Add(c);
     }
 }

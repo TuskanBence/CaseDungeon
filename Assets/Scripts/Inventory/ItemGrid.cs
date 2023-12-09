@@ -23,6 +23,10 @@ public class ItemGrid : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
         Init(gridSizeWidth, gridSizeHeight);
         this.gameObject.SetActive(false);
+        foreach ( Case current in Inventory.Instance.cases)
+        {
+            InventoryController.instance.InsertCaseS(current);
+        }
     }
     public void Init(int width,int height)
     {
@@ -95,7 +99,6 @@ public class ItemGrid : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                Debug.Log(inventoryitemSlotCase);
                 if (inventoryitemSlotCase[posX + x, posY + y] != null) { return false; }
             }
 

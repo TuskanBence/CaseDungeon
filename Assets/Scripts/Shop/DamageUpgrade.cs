@@ -26,13 +26,11 @@ public class DamageUpgrade : MonoBehaviour
     }
     private void buyDamage()
     {
-        Debug.Log("Damage upgraded");
-        Debug.Log(PlayerStatsManager.instance.getPlayerDamage());
-        PlayerStatsManager.instance.setPlayerDamage(5);
+       
+        PlayerStatsManager.instance.addPlayerDamage(5);
         Player.playerInstance.currentMoney -= price;
         price += 50;
         Player.playerInstance.refreshStats();
-        Debug.Log(PlayerStatsManager.instance.getPlayerDamage());
     }
 
     private void OnTriggerExit2D(Collider2D collision)

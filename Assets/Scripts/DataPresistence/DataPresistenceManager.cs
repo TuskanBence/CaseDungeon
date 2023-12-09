@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
 using System;
 using System.IO;
@@ -13,6 +14,7 @@ public class DataPresistenceManager : MonoBehaviour
     private GameData gamedata;
     private List<IDataPersistence> dataPresistencesObjects;
     private FileDataHandler dataHandler;
+    public Button button;
   public static DataPresistenceManager instance { get; private set; }
 
     private void Awake()
@@ -25,7 +27,6 @@ public class DataPresistenceManager : MonoBehaviour
         }
        
         instance = this;
-        DontDestroyOnLoad(this.gameObject);
     }
     private void Start()
     {
@@ -51,24 +52,26 @@ public class DataPresistenceManager : MonoBehaviour
         this.gamedata = dataHandler.Load();
         if (this.gamedata==null)
         {
-            Debug.Log("No data found dffauk");
+            Player.playerInstance.comingFromShop =false;
             NewGame();
         }
-        foreach (IDataPersistence dataPersistenceobj in dataPresistencesObjects)
-        {
-            dataPersistenceobj.LoadData(gamedata);
-        }
+        gamedata.fromShop =Player.playerInstance.comingFromShop;
+            foreach (IDataPersistence dataPersistenceobj in dataPresistencesObjects)
+            {
+                dataPersistenceobj.LoadData(gamedata);
+            }
+        
+      
     }
     public void SaveGame()
     {
+        Debug.Log("Saving game data...");
         foreach (IDataPersistence dataPersistenceobj in dataPresistencesObjects)
         {
             dataPersistenceobj.SaveData(ref gamedata);
+            Debug.Log(dataPersistenceobj + " saved.");
         }
         dataHandler.Save(gamedata);
-    }
-    public void OnApplicationQuit()
-    {
-        SaveGame();
+        Debug.Log("Game data saved.");
     }
 }

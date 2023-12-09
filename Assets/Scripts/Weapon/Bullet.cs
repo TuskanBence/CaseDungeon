@@ -7,9 +7,8 @@ public class Bullet : MonoBehaviour
     public int damage { get; set; }
     private void Start()
     {
-        Player player = GetComponentInParent<Player>();
-        Debug.Log(player);
-        damage = player.getDamage();
+
+        damage = PlayerStatsManager.instance.getPlayerDamage();
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {

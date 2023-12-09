@@ -10,11 +10,13 @@ public class Room : MonoBehaviour
    public bool cleared;
     public int Width;
     public int Height;
-    public int Y;
     public int X;
+    public int Y;
+    public bool fromSave;
 
     public GameObject spawnPoint;
-    List<EnemyAI> enemies = new List<EnemyAI>();
+    public List<EnemyAI> enemies = new List<EnemyAI>();
+    public List<Case> cases = new List<Case>();
     private bool updatedDoors = false;
     public Room(int x, int y)
     {
@@ -57,6 +59,27 @@ public class Room : MonoBehaviour
         {
             enemies = new List<EnemyAI>();
         }
+        if (cases == null)
+        {
+            cases = new List<Case>();
+        }
+        Debug.Log(fromSave);
+        if (!fromSave) {
+            CaseGenerator g = spawnPoint.GetComponent<CaseGenerator>();
+            if (g!=null)
+            {
+                g.SpawnCases();
+            }
+           
+        }
+        if (!cleared)
+        {
+            EnemyGenerator e = spawnPoint.GetComponent<EnemyGenerator>();
+            if (e != null)
+            {
+                e.GenerateEnemies();
+            }
+        }
     }
     private void Update()
     {
@@ -70,6 +93,7 @@ public class Room : MonoBehaviour
             doorControll(false);
             cleared = true;
         }
+      
 
     }
     private void OnDrawGizmos()
@@ -193,4 +217,6 @@ public class Room : MonoBehaviour
     {
         enemies.Remove(enemy);
     }
+
+   
 }

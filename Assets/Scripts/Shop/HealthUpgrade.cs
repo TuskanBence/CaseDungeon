@@ -26,7 +26,7 @@ public class HealthUpgrade : MonoBehaviour
     private void buyHp()
     {
         Debug.Log(PlayerStatsManager.instance.getPlayerMaxHealth());
-        PlayerStatsManager.instance.setPlayerMaxHealth(5);
+        PlayerStatsManager.instance.addPlayerMaxHealth(5);
         Player.playerInstance.currentMoney-=price;
         price += 50;
         Player.playerInstance.refreshStats();

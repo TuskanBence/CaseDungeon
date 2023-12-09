@@ -11,13 +11,15 @@ public class Player : MonoBehaviour
     [SerializeField]public float pushDuration;
     [SerializeField] public float pushForce;
     [SerializeField] public Slider healtBar; // Reference to the player
+    public int maxHealth { get; set; }
     public int currentHealth { get; set; }
     public int currentMoney { get; set; }
     public int range { get; set; }
     public int damage { get; set; }
-    public int maxHealth { get; set; }
+  
     public static Player playerInstance;
     public bool isInShopArea=false;
+    internal bool comingFromShop;
 
     void Awake()
     {
@@ -31,16 +33,19 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        comingFromShop = false;
     }
     void Start()
     {
         refreshStats();
         setMaxHealth(maxHealth);
         currentHealth = maxHealth;
+
         
     }
     private void Update()
     {
+        refreshStats();
         if (Input.GetKeyDown(KeyCode.G)&& isInShopArea)
         {
             SellAllCases();
@@ -59,18 +64,18 @@ public class Player : MonoBehaviour
                 {
                     // Remove from the list
                     Inventory.Instance.cases.Remove(currentCase);
-                    currentMoney += currentCase.caseValue;
+                    PlayerStatsManager.instance.addPlayerMoney(currentCase.caseValue);
                     InventoryController.instance.selectedItemGrid.CleanGridReference(currentCase);
                     // Destroy the game object
                     Destroy(currentCase.gameObject);
                 }
             }
         }
+        refreshStats();
     }
 
     public void TakeDamage(int damageAmount)
     {
-        Debug.Log("MÁR PLAYARWS "+maxHealth);
         currentHealth -= damageAmount;
         setCurerntHealth(currentHealth);
         if (currentHealth <= 0)
@@ -131,6 +136,9 @@ public class Player : MonoBehaviour
         maxHealth = PlayerStatsManager.instance.getPlayerMaxHealth();
         range = PlayerStatsManager.instance.getPlayerRange();
         damage = PlayerStatsManager.instance.getPlayerDamage();
+        currentMoney = PlayerStatsManager.instance.getPlayerMoney();
         InventoryController.instance.UpdateMoney(currentMoney);
     }
+
+   
 }
