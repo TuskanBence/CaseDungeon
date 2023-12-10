@@ -15,19 +15,18 @@ public class InventoryController : MonoBehaviour
     [SerializeField] public ItemGrid selectedItemGrid;
     public TextMeshProUGUI info;
     public TextMeshProUGUI money;
+    public Button saveButton;
     public static InventoryController instance;
-    InventoryItem selectedItem;
     Case selectedCase;
-    InventoryItem overlapItem;
+
     Case overlapCase;
-    InventoryItem itemToHighlight;
+
     Case CaseToHighlight;
     RectTransform rectTransform;
 
     bool InventoryActive;
 
-    [SerializeField] List<ItemData> items;
-    [SerializeField] GameObject itemPrefab;
+
     [SerializeField] Transform canvasTranform;
 
     InventoryHighligth inventoryHighligth;
@@ -51,6 +50,7 @@ public class InventoryController : MonoBehaviour
     }
     private void Update()
     {
+        UpdateMoney(Player.playerInstance.currentMoney);
         if (Player.playerInstance.isInShopArea)
         {
             info.gameObject.SetActive(true);
@@ -58,7 +58,13 @@ public class InventoryController : MonoBehaviour
         else
         {
             info.gameObject.SetActive(false);
-         }
+        }
+        if (Player.playerInstance.inUpgradeRoom)
+        {
+            saveButton.gameObject.SetActive(true);
+        }
+        else
+        { saveButton.gameObject.SetActive(false);}
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ShowInventory(InventoryActive);
@@ -99,8 +105,21 @@ public class InventoryController : MonoBehaviour
     {
 
         Case itemToInsert = insert;
+        ChangeSize(itemToInsert.gameObject.GetComponent<RectTransform>(), 32f * (int)itemToInsert.caseSize, 32f * (int)itemToInsert.caseSize);
         selectedCase = null;
         InsertCase(insert);
+    }
+    private void ChangeSize(RectTransform rectTransform, float newWidth, float newHeight)
+    {
+        if (rectTransform != null)
+        {
+            // Modify the sizeDelta property to change width and height
+            rectTransform.sizeDelta = new Vector2(newWidth, newHeight);
+        }
+        else
+        {
+            Debug.LogError("RectTransform is not assigned.");
+        }
     }
     public void InsertCase(Case itemToInsert)
     {
@@ -173,7 +192,7 @@ public class InventoryController : MonoBehaviour
             RoomController.instance.getCurrentRoom().cases.Add(selectedCase);
             Inventory.Instance.Remove(selectedCase);
             selectedCase = null;
-          
+
             return;
         }
         bool complete = selectedItemGrid.PlaceItem(selectedCase, tileGridPosition.x, tileGridPosition.y, ref overlapCase);
@@ -200,15 +219,6 @@ public class InventoryController : MonoBehaviour
         {
             rectTransform = selectedCase.GetComponent<RectTransform>();
         }
-    }
-
-    private void ItemIconDrag()
-    {
-        if (selectedItem != null)
-        {
-            rectTransform.position = Input.mousePosition;
-        }
-
     }
     private void ItemIconDragCase()
     {

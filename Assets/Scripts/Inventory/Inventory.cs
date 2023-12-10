@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour, IDataPersistence
+public class Inventory : MonoBehaviour,IDataPersistence
 {
     public GameObject casePrefab;
     public List<Case> cases = new List<Case>();
@@ -13,9 +13,14 @@ public class Inventory : MonoBehaviour, IDataPersistence
         if (Instance != null)
         {
             Debug.LogWarning("More than on einstance of inventory found");
-            return;
+            Destroy(gameObject);
+           
         }
-        Instance = this;
+        else
+        {
+            Instance = this;
+        }
+        
     }
 
     public void Add(Case c)
@@ -28,44 +33,36 @@ public class Inventory : MonoBehaviour, IDataPersistence
         cases.Remove(c);
     }
 
-    public void LoadData(GameData data)
-    {
-        if (data.fromShop)
-        {
-            return;
-        }
-        else
-        {
-            foreach (CaseData current in data.playerCases)
-            {
-                Case caseComponent = CreateCase(current, new Vector2(0, 0));
-                cases.Add(caseComponent);
-            }
-        }
+   
 
-    }
-
-    public Case CreateCase(CaseData current,Vector2 location)
+    public Case CreateCase(CaseData current)
     {
-        GameObject caseObject = Instantiate(casePrefab, location, Quaternion.identity);
+        GameObject caseObject = Instantiate(casePrefab, new Vector2(0,0), Quaternion.identity);
         Case caseComponent = caseObject.GetComponent<Case>();
         caseComponent.Initialize(current);
-        caseComponent.transformX = location.x;
-        caseComponent.transformY = location.y;
         return caseComponent;
+    }
+
+    public void LoadData(GameData data)
+    {
+        foreach (CaseData currentCase in data.playerCases)
+        {
+            cases.Add(CreateCase(currentCase));
+        }
     }
 
     public void SaveData(ref GameData data)
     {
         data.playerCases.Clear();
-        foreach (Case currentCase in cases)
+        foreach (Case currenCase in cases)
         {
-            CaseData randomCase = new CaseData();
-            randomCase.caseValue = currentCase.caseValue;
-            randomCase.caseWeight = currentCase.caseWeight;
-            randomCase.caseSize = currentCase.caseSize;
-            randomCase.caseRarity = currentCase.caseRarity;
-            data.playerCases.Add(randomCase);
+            CaseData c = new CaseData();
+            c.caseRarity=currenCase.caseRarity;
+            c.caseValue=currenCase.caseValue;   
+            c.caseWeight=currenCase.caseWeight; 
+            c.caseSize=currenCase.caseSize;
+
+            data.playerCases.Add(c);
         }
     }
 }

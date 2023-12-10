@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class DamageUpgrade : MonoBehaviour
 {
-    public TextMeshProUGUI text;
+    public TextMeshProUGUI priceText;
+    public TextMeshProUGUI valueText;
     public int price=100;
     private void OnTriggerStay2D(Collider2D collision)
     {
@@ -20,17 +21,26 @@ public class DamageUpgrade : MonoBehaviour
            
         }
     }
+    private void Start()
+    {
+        price = PriceStorage.instance.damageUpgradePrice;
+    }
     private void Update()
     {
-        text.text = "Damage Price:" + price;
+        valueText.text = "Current damage: " + Player.playerInstance.getDamage();
+        priceText.text = "Damage Price:" + price;
     }
     private void buyDamage()
     {
-       
-        PlayerStatsManager.instance.addPlayerDamage(5);
+        Debug.Log("DAMage upgrade");
+        Debug.Log(Player.playerInstance.damage);
+        Player.playerInstance.damage+=1;
         Player.playerInstance.currentMoney -= price;
-        price += 50;
-        Player.playerInstance.refreshStats();
+        price += 100;
+        PriceStorage.instance.damageUpgradePrice = price;
+        Debug.Log(Player.playerInstance.damage);
+        Debug.Log(PriceStorage.instance.damageUpgradePrice);
+        Debug.Log("DAMAGE END");
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -41,4 +51,6 @@ public class DamageUpgrade : MonoBehaviour
     {
         Player.playerInstance.isInShopArea = true;
     }
+
+   
 }

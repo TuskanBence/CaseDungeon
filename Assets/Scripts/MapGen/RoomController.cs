@@ -27,7 +27,7 @@ public class RoomInfo
     }
 }
 
-public class RoomController : MonoBehaviour,IDataPersistence
+public class RoomController : MonoBehaviour
 {
     public static RoomController instance;
     Room currentRoom;
@@ -69,11 +69,12 @@ public class RoomController : MonoBehaviour,IDataPersistence
     }
     //Creates a room and places it inside a queue
     public void LoadRoom(RoomInfo newroom)
-    {
-        if (DoesRoomExist(newroom.X, newroom.Y))
+    { 
+        if (DoesRoomExist(newroom.X, newroom.Y)|| loadRoomQueue.Any(room => room.X == newroom.X && room.Y == newroom.Y))
         {
             return;
         }
+        
         loadRoomQueue.Enqueue(newroom);
     }
     public void addRoom(RoomInfo r)
@@ -103,25 +104,16 @@ public class RoomController : MonoBehaviour,IDataPersistence
             // room.name = currentWorldName + "-" + currentLoadRoomData.name + " " + room.X + ", " + room.Y;
             room.name = currentLoadRoomData.name;
             room.transform.parent = transform;
-            foreach (CaseData c in currentLoadRoomData.cases)
-            {
-                Case newCase = Inventory.Instance.CreateCase(c, new Vector2(c.locationX, c.locationY));
-               newCase.transform.SetParent(room.transform);
-                newCase.transform.position=new Vector2(c.locationX,c.locationY);
-                room.cases.Add(newCase);
-            }
             isLoadingRoom = false;
             if (loadedRooms.Count == 0)
             {
                 CameraController.instance.currentRoom = room;
             }
-            room.cleared = currentLoadRoomData.cleared;
-            room.fromSave=currentLoadRoomData.fromSave;
             loadedRooms.Add(room);
         }
         else
         {
-            Destroy(room.gameObject);
+           Destroy(room.gameObject);
             isLoadingRoom = false;
         } 
     }
@@ -172,54 +164,5 @@ public class RoomController : MonoBehaviour,IDataPersistence
             LoadRoom(new RoomInfo("End", temproom.X, temproom.Y));
 
         }
-    }
-
-    public void LoadData(GameData data)
-    {
-        if (data.rooms.Count==0||data.fromShop)
-        {
-          foreach (RoomInfo c in potencialrooms)
-            {
-                c.fromSave = false;
-                LoadRoom(c);
-            }
-        }
-        else
-        { 
-            foreach (savedRoom currRoom in data.rooms)
-            {
-                currRoom.room.fromSave = true; 
-                LoadRoom(currRoom.room);
-            }
-        }
-       
-    }
-
-    public void SaveData(ref GameData data)
-    {
-        data.rooms.Clear();
-        foreach (Room currRoom in loadedRooms)
-        {
-            savedRoom s;
-            s.room = new RoomInfo(currRoom.name, currRoom.X, currRoom.Y);
-            s.room.cleared = currRoom.cleared;
-            foreach (Case c in currRoom.cases)
-            {
-                CaseData newCase = new CaseData();
-                newCase.caseValue = c.caseValue;
-                newCase.caseRarity = c.caseRarity;
-                newCase.caseWeight = c.caseWeight;
-                newCase.caseSize = c.caseSize;
-                newCase.locationX = c.transformX;
-                newCase.locationY = c.transformY;
-                s.room.cases.Add(newCase);
-            }
-
-            s.enemies = new List<EnemyAI>();
-            s.enemies.AddRange(currRoom.enemies);
-            data.rooms.Add(s); 
-            
-        }
-
-    }
+    }  
 }

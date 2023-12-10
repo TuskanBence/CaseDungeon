@@ -8,7 +8,7 @@ public class Bullet : MonoBehaviour
     private void Start()
     {
 
-        damage = PlayerStatsManager.instance.getPlayerDamage();
+        damage = Player.playerInstance.damage;
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {

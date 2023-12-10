@@ -63,7 +63,6 @@ public class Room : MonoBehaviour
         {
             cases = new List<Case>();
         }
-        Debug.Log(fromSave);
         if (!fromSave) {
             CaseGenerator g = spawnPoint.GetComponent<CaseGenerator>();
             if (g!=null)

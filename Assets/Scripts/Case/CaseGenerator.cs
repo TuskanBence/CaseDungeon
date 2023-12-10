@@ -61,11 +61,6 @@ public class CaseGenerator : MonoBehaviour
 
         return randomCase;
     }
-
-    private void Start()
-    {
-        
-    }
     public void SpawnCases()
     {
         int randomValue = GetWeightedRandomValue();
@@ -90,8 +85,6 @@ public class CaseGenerator : MonoBehaviour
         // Access the CaseComponent script on the instantiated object
         Case caseComponent = caseObject.GetComponent<Case>();
         caseComponent.Initialize(newCase);
-        caseComponent.transformX = randomPosition.x;
-        caseComponent.transformY = randomPosition.y;
         r.cases.Add(caseComponent); 
     }
    

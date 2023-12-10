@@ -9,7 +9,5 @@ public class CaseData
     public float caseWeight;
     public Case.Size caseSize;
     public Case.Rarity caseRarity;
-    public float locationX;
-    public float locationY;
 }
 

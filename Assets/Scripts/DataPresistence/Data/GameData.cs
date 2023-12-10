@@ -5,31 +5,26 @@ using UnityEngine;
 [System.Serializable]
 public class GameData
 {
+    public int playerMaxHealth;
+    public int playerCurrentHealth;
     public int playerMoney;
     public int playerDamage;
-    public int playerMaxHealth;
     public int playerRange;
-    public bool fromShop;
-    public Vector3 playerPosition;
+    public int rangeUpgradePrice;
+    public int damageUpgradePrice;
+    public int healthUpgradePrice;
     public List<CaseData> playerCases;
-    public List<savedRoom> rooms;
-
-    [System.Serializable]
-    public struct savedRoom
-    {
-        public RoomInfo room;
-        public List<EnemyAI> enemies;
-
-    }
 
     public GameData()
     {
         this.playerMoney = 0;
-        this.playerRange = 6;
-        this.playerDamage =20;
+        this.playerRange = 3;
+        this.playerDamage = 2;
         this.playerMaxHealth = 10;
-        playerPosition = Vector3.zero;
-        playerCases = new List<CaseData>();
-        rooms = new List<savedRoom>();
-}
+        this.playerCurrentHealth = playerMaxHealth;
+        this.rangeUpgradePrice = 500;
+        this.damageUpgradePrice = 100;
+        this.healthUpgradePrice = 100;
+        this.playerCases = new List<CaseData>();
+    }
 }

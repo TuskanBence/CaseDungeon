@@ -6,31 +6,56 @@ using UnityEngine;
 
 public class RangeUpgrade : MonoBehaviour
 {
-    public TextMeshProUGUI text;
-    public int price = 100;
+    public TextMeshProUGUI priceText;
+    public TextMeshProUGUI valueText;
+    public int price;
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") && Input.GetKeyDown(KeyCode.F))
         {
             if (Player.playerInstance.currentMoney >= price)
             {
-                buyRange();
+                if (Player.playerInstance.range>=8)
+                {
+                    return;
+                }
+                else
+                {
+                    buyRange();
+                }
+                
             }
         }
     }
+    private void Start()
+    {
+        price = PriceStorage.instance.rangeUpgradePrice;
+    }
     private void Update()
     {
-        text.text = "Range Price:" + price;
+        if (Player.playerInstance.range >= 8)
+        {
+            valueText.text = "Current range: " + Player.playerInstance.getRange();
+            priceText.text = "You have reached max range";
+        }
+        else
+        {
+            valueText.text = "Current range: " + Player.playerInstance.getRange();
+            priceText.text = "Range Price:" + price;
+        }
+
     }
     private void buyRange()
     {
         Debug.Log("Range upgraded");
-        Debug.Log(PlayerStatsManager.instance.getPlayerRange());
-        PlayerStatsManager.instance.addPlayerRange(2);
+        Debug.Log(Player.playerInstance.range);
+        Player.playerInstance.range+=1;
         Player.playerInstance.currentMoney -= price;
-        price += 50;
-        Player.playerInstance.refreshStats();
-        Debug.Log(PlayerStatsManager.instance.getPlayerRange());
+        price += 500;
+        PriceStorage.instance.rangeUpgradePrice=price;
+        Debug.Log(Player.playerInstance.range);
+        Debug.Log(PriceStorage.instance.rangeUpgradePrice);
+        Debug.Log("Range END");
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -41,4 +66,6 @@ public class RangeUpgrade : MonoBehaviour
     {
         Player.playerInstance.isInShopArea = true;
     }
+
+    
 }

@@ -16,8 +16,8 @@ public class ItemGrid : MonoBehaviour
     RectTransform rectTransform;
     [SerializeField] public int gridSizeWidth;
     [SerializeField] public int gridSizeHeight;
-
-    [SerializeField] GameObject inventoryItemPrefab;
+    Vector2 positionOnTheGrid = new Vector2();
+    Vector2Int tileGridPosition = new Vector2Int();
     private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -35,8 +35,7 @@ public class ItemGrid : MonoBehaviour
         rectTransform.sizeDelta = size;
     }
 
-    Vector2 positionOnTheGrid = new Vector2 (); 
-    Vector2Int tileGridPosition  = new Vector2Int (); 
+ 
     public Vector2Int GetTileGridPosition(Vector2 mousePosition)
     {
         positionOnTheGrid.x = mousePosition.x-rectTransform.position.x;
@@ -45,6 +44,7 @@ public class ItemGrid : MonoBehaviour
         tileGridPosition.x = (int)(positionOnTheGrid.x / tileSizeWidht);
         tileGridPosition.y = (int)(positionOnTheGrid.y / tileSizeHeight);
 
+       
         return tileGridPosition;
 
     }

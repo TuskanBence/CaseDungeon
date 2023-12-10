@@ -14,7 +14,6 @@ public class DataPresistenceManager : MonoBehaviour
     private GameData gamedata;
     private List<IDataPersistence> dataPresistencesObjects;
     private FileDataHandler dataHandler;
-    public Button button;
   public static DataPresistenceManager instance { get; private set; }
 
     private void Awake()
@@ -27,9 +26,10 @@ public class DataPresistenceManager : MonoBehaviour
         }
        
         instance = this;
+        DontDestroyOnLoad(gameObject);
     }
     private void Start()
-    {
+    { 
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
         this.dataPresistencesObjects = FindAllDataPresisnteceObjects();
         LoadGame();
@@ -49,14 +49,13 @@ public class DataPresistenceManager : MonoBehaviour
     }
     public void LoadGame()
     {
+        
         this.gamedata = dataHandler.Load();
         if (this.gamedata==null)
         {
-            Player.playerInstance.comingFromShop =false;
             NewGame();
         }
-        gamedata.fromShop =Player.playerInstance.comingFromShop;
-            foreach (IDataPersistence dataPersistenceobj in dataPresistencesObjects)
+        foreach (IDataPersistence dataPersistenceobj in dataPresistencesObjects)
             {
                 dataPersistenceobj.LoadData(gamedata);
             }
@@ -66,6 +65,7 @@ public class DataPresistenceManager : MonoBehaviour
     public void SaveGame()
     {
         Debug.Log("Saving game data...");
+        this.dataPresistencesObjects = FindAllDataPresisnteceObjects();
         foreach (IDataPersistence dataPersistenceobj in dataPresistencesObjects)
         {
             dataPersistenceobj.SaveData(ref gamedata);

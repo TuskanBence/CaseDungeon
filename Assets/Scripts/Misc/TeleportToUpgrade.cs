@@ -11,8 +11,9 @@ public class TeleportToUpgrade : MonoBehaviour
         if (collision.CompareTag("Player") && Input.GetKeyDown(KeyCode.F)&& room.cleared)
         {
             collision.gameObject.transform.position = new Vector2(0, 0);
+            Player.playerInstance.inUpgradeRoom = true;
             SceneManager.LoadScene("UpgradeRoom");
-            Player.playerInstance.comingFromShop = true;
+           
         }
     }
 }

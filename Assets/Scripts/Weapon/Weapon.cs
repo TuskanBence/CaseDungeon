@@ -10,16 +10,13 @@ public class Weapon : MonoBehaviour
     float nextTimeToFire = 0f;
     [SerializeField] public Transform target;
     [SerializeField] public GameObject bulett;
+
     [SerializeField] public Transform shootPoint;
     [SerializeField] public float force;
     Player p;
     bool Detected = false;
     Vector2 direction;
     public LayerMask targetLayer;
-    private void Start()
-    {
-        
-    }
     void Update()
     {
         if (p == null)
@@ -29,6 +26,7 @@ public class Weapon : MonoBehaviour
         }
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, p.getRange(), targetLayer);
         Debug.DrawRay(transform.position, direction, Color.red);
+       
         Transform closestEnemy = null;
         float closestDistance = Mathf.Infinity;
 

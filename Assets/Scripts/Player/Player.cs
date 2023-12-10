@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour,IDataPersistence
 {
     [SerializeField]public float pushDuration;
     [SerializeField] public float pushForce;
     [SerializeField] public Slider healtBar; // Reference to the player
+    [SerializeField] public TextMeshProUGUI deathtext;
     public int maxHealth { get; set; }
     public int currentHealth { get; set; }
     public int currentMoney { get; set; }
@@ -19,7 +21,7 @@ public class Player : MonoBehaviour
   
     public static Player playerInstance;
     public bool isInShopArea=false;
-    internal bool comingFromShop;
+    public bool inUpgradeRoom;
 
     void Awake()
     {
@@ -33,11 +35,11 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        comingFromShop = false;
+        inUpgradeRoom = false;
     }
     void Start()
     {
-        refreshStats();
+      
         setMaxHealth(maxHealth);
         currentHealth = maxHealth;
 
@@ -45,7 +47,7 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
-        refreshStats();
+       
         if (Input.GetKeyDown(KeyCode.G)&& isInShopArea)
         {
             SellAllCases();
@@ -62,16 +64,16 @@ public class Player : MonoBehaviour
 
                 if (currentCase != null)
                 {
-                    // Remove from the list
+                    currentMoney+=currentCase.caseValue;
                     Inventory.Instance.cases.Remove(currentCase);
-                    PlayerStatsManager.instance.addPlayerMoney(currentCase.caseValue);
+                   
                     InventoryController.instance.selectedItemGrid.CleanGridReference(currentCase);
                     // Destroy the game object
                     Destroy(currentCase.gameObject);
                 }
             }
         }
-        refreshStats();
+     
     }
 
     public void TakeDamage(int damageAmount)
@@ -95,7 +97,9 @@ public class Player : MonoBehaviour
     void Die()
     {
         Destroy(gameObject);
-        Debug.Log("Player has died!");
+        deathtext.gameObject.SetActive(true);
+        StartCoroutine(closeGame(3f));
+        Application.Quit();
     }
 
     public void PushPlayer(EnemyAI enemyAI)
@@ -131,14 +135,32 @@ public class Player : MonoBehaviour
         return damage;
     }
 
-    internal void refreshStats()
+    IEnumerator closeGame(float delay)
     {
-        maxHealth = PlayerStatsManager.instance.getPlayerMaxHealth();
-        range = PlayerStatsManager.instance.getPlayerRange();
-        damage = PlayerStatsManager.instance.getPlayerDamage();
-        currentMoney = PlayerStatsManager.instance.getPlayerMoney();
-        InventoryController.instance.UpdateMoney(currentMoney);
+        // Restart the level (replace "YourSceneName" with the actual name of your scene)
+        
+        yield return new WaitForSeconds(delay);
+
+       
     }
 
-   
+    public void LoadData(GameData data)
+    {
+        maxHealth = data.playerMaxHealth;
+        currentHealth = data.playerCurrentHealth;
+        damage = data.playerDamage;
+        range = data.playerRange;
+        currentMoney = data.playerMoney;
+        setMaxHealth(maxHealth);
+        setCurerntHealth(currentHealth);
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.playerMaxHealth = maxHealth;
+        data.playerCurrentHealth = currentHealth;
+        data.playerDamage = damage;
+        data.playerRange = range;
+        data.playerMoney = currentMoney;
+    }
 }

@@ -24,9 +24,7 @@ public class Case : MonoBehaviour
     public Size caseSize { get; set; }
     public Rarity caseRarity { get; set; }
     public int onGridPositionX { get; set; }
-    public float transformX { get; set; }
     public int onGridPositionY { get; set; }
-    public float transformY { get; set; }
     internal void Initialize(CaseData randomData)
     {
         this.caseValue = randomData.caseValue;

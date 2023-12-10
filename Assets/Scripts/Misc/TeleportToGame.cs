@@ -10,6 +10,7 @@ public class TeleportToGame : MonoBehaviour
         if (collision.CompareTag("Player") && Input.GetKeyDown(KeyCode.F) )
         {
             Debug.Log("Teleport commening");
+            Player.playerInstance.inUpgradeRoom = false;
             SceneManager.LoadScene("BasementMain");
         }
     }
