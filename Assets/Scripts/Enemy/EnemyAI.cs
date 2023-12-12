@@ -1,32 +1,72 @@
 using System;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 
+/// <summary>
+/// Handles the behavior of an enemy AI, including movement, health, and interactions with the player.
+/// </summary>
 public class EnemyAI : MonoBehaviour
 {
-    public float speed = 3f; // Adjust the speed as needed
-    public Transform player; // Reference to the player's 
-    public Transform healtBar; // Reference to the player's 
+    /// <summary>
+    /// Speed of the enemy.
+    /// </summary>
+    public float speed = 3f;
+
+    /// <summary>
+    /// Reference to the player's transform for tracking.
+    /// </summary>
+    public Transform player;
+
+    /// <summary>
+    /// Reference to the health bar.
+    /// </summary
+    public Transform healtBar;
+
+    /// <summary>
+    /// Reference to the Rigidbody2D component attached to the enemy.
+    /// </summary>
     private Rigidbody2D enemyRigidbody;
+
+    /// <summary>
+    /// Reference to the room that the enemy is in.
+    /// </summary>
     private Room room;
-    private bool playerInRange = false; // Flag to indicate if the player is in range
+
+
+    /// <summary>
+    /// Shows if the player is in range.
+    /// </summary>
+    private bool playerInRange = false;
+
+
+     /// <summary>
+     /// The damage dealt by the enemy.
+     /// </summary>
     public int damage = 5;
+
+
+    /// <summary>
+    /// The current health of the player.
+    /// </summary>
     public int currentHealth { get; set; }
+
+    /// <summary>
+    /// The maximum health of the enemy.
+    /// </summary>
     public int maxHealth = 10;
 
+    /// <summary>
+    /// Called when the object is enabled.
+    /// </summary>
     void Start()
     {
         enemyRigidbody = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
     }
-
-   public void RangeCollision()
-    {
-       
-        playerInRange = true;
-    }
-
-  public  void DamageCollision(Player player)
+    /// <summary>
+    /// Handles collision with player and reduces player's health.
+    /// </summary>
+    /// <param name="player">The player instance that collided with the enemy.</param>
+    public void DamageCollision(Player player)
     {
         if (player == null)
         {
@@ -35,11 +75,19 @@ public class EnemyAI : MonoBehaviour
         player.TakeDamage(damage);
         player.PushPlayer(this);
     }
+    /// <summary>
+    /// Handles collision with bullets and reduces enemy's health.
+    /// </summary>
+    /// <param name="bullet">The bullet instance that collided with the enemy.</param>
     public void BulletCollison(Bullet bullet)
     {
         TakeDamage(bullet.damage);
     }
 
+    /// <summary>
+    /// Enemy takes damage.
+    /// </summary>
+    /// <param name="damage">The amount of damage the enemy takes.</param>
     private void TakeDamage(int damage)
     {
             currentHealth -= damage;
@@ -50,12 +98,18 @@ public class EnemyAI : MonoBehaviour
             }
     }
 
+    /// <summary>
+    ///  Updates the healtBars current value to the current health of the enemy.
+    /// </summary>
     private void UpdateHealthBar()
     {
         float healthPercentage = (float)currentHealth / maxHealth;
        healtBar.transform.localScale = new Vector3(5*healthPercentage, 1f, 1f);
     }
 
+    /// <summary>
+    /// Handles the enemy's death.
+    /// </summary>
     private void Die()
     {
         if (room!=null)
@@ -65,6 +119,9 @@ public class EnemyAI : MonoBehaviour
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Called every frame.
+    /// </summary>
     void Update()
     {
         // If the player is in range, move towards the player
@@ -76,11 +133,19 @@ public class EnemyAI : MonoBehaviour
             enemyRigidbody.MovePosition(transform.position + direction * speed * Time.deltaTime);
         }
     }
-
+    /// <summary>
+    ///  Set the room the enemy is in
+    /// </summary>
+    /// <param name="room">Room that the enemy is in</param>
     internal void setRoom(Room room)
     {
         this.room = room;
     }
+
+    /// <summary>
+    ///  Set the player
+    /// </summary>
+    /// <param name="p">Player thats set</param>
     internal void setPlayer(Transform p)
     {
         this.player = p.transform;

@@ -2,25 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Represents a door in the game.
+/// </summary>
 public class Door : MonoBehaviour
 {
-  public enum DoorType
+    /// <summary>
+    /// Enum representing different types of doors.
+    /// </summary>
+    public enum DoorType
     {
-        left,right, top, bottom
+        left, right, top, bottom
     }
-    public DoorType doortype;
-    public bool nowhere;
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player")) {
-            Player p = collision.gameObject.GetComponent<Player>();
-            switch (doortype)
-            {
-                case DoorType.bottom:
-                  
-                    break;
-            }
-        }
-    }
+    /// <summary>
+    /// Gets or sets the type of the door.
+    /// </summary>
+    public DoorType doortype;
+
+    /// <summary>
+    /// Gets or sets a value indicating if the door leads to nowhere.
+    /// </summary>
+    public bool nowhere;
 }
