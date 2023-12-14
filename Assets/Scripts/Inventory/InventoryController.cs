@@ -212,7 +212,7 @@ public class InventoryController : MonoBehaviour
     public void InsertCase(Case itemToInsert)
     {
         ChangeSize(itemToInsert.gameObject.GetComponent<RectTransform>(), 32f * (int)itemToInsert.caseSize, 32f * (int)itemToInsert.caseSize);
-        selectedCase = null;
+        //selectedCase = null;
         Vector2Int? posOnGrid = selectedItemGrid.FindSpaceForObject(itemToInsert);
         if (posOnGrid == null) { return; }
         selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
@@ -310,17 +310,11 @@ public class InventoryController : MonoBehaviour
 
             return;
         }
-        bool complete = selectedItemGrid.PlaceItem(selectedCase, tileGridPosition.x, tileGridPosition.y, ref overlapCase);
+        bool complete = selectedItemGrid.SuccessfulCasePlacement(selectedCase, tileGridPosition.x, tileGridPosition.y);
 
         if (complete)
-        {
+        { 
             selectedCase = null;
-            if (overlapCase != null)
-            {
-                selectedCase = overlapCase;
-                overlapCase = null;
-                rectTransform = selectedCase.GetComponent<RectTransform>();
-            }
         }
     }
 

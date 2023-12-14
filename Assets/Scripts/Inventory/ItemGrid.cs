@@ -85,7 +85,7 @@ public class ItemGrid : MonoBehaviour
         Vector2 size = new Vector2(width * tileSizeWidht, height * tileSizeHeight);
         rectTransform.sizeDelta = size;
     }
-
+ 
     /// <summary>
     /// Gets the tile grid position based on the mouse position.
     /// </summary>
@@ -111,20 +111,17 @@ public class ItemGrid : MonoBehaviour
     /// <param name="posY">The y-position on the grid.</param>
     /// <param name="overlapItem">The item overlapping with the target position.</param>
     /// <returns>True if the item can be placed, false otherwise.</returns>
-    public bool PlaceItem(Case item, int posX, int posY, ref Case overlapItem)
+    public bool SuccessfulCasePlacement(Case item, int posX, int posY)
     {
         if (BoundryCheck(posX, posY, (int)item.caseSize, (int)item.caseSize) == false)
         {
             return false;
         }
 
-        if (OverlapCheck(posX, posY, (int)item.caseSize, (int)item.caseSize, ref overlapItem) == false)
+        if (OverlapCheck(posX, posY, (int)item.caseSize, (int)item.caseSize) == false)
         {
-            overlapItem = null;
             return false;
         }
-
-        if (overlapItem != null) { CleanGridReference(overlapItem); }
         PlaceItem(item, posX, posY);
         return true;
     }
@@ -196,7 +193,7 @@ public class ItemGrid : MonoBehaviour
     /// <param name="height">The height of the empty space needed.</param>
     /// <param name="overlapItem">The item overlapping with the target position.</param>
     /// <returns>Returns false if there is more than one item overlapping otherwise, true.</returns>
-    private bool OverlapCheck(int posX, int posY, int width, int height, ref Case overlapItem)
+    private bool OverlapCheck(int posX, int posY, int width, int height)
     {
         for (int x = 0; x < width; x++)
         {
@@ -204,14 +201,8 @@ public class ItemGrid : MonoBehaviour
             {
                 if (inventoryitemSlotCase[posX + x, posY + y] != null)
                 {
-                    overlapItem = inventoryitemSlotCase[posX + x, posY + y];
-                }
-                else
-                {
-                    if (overlapItem != inventoryitemSlotCase[posX + x, posY + y])
-                    {
-                        return false;
-                    }
+                  
+                    return false;
                 }
             }
         }
