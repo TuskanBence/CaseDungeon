@@ -23,7 +23,7 @@ public class TeleportToGame : MonoBehaviour
             Player.playerInstance.inUpgradeRoom = false;
 
             // Load the "BasementMain" scene
-            SceneManager.LoadScene("BasementMain");
+            SceneManager.LoadScene("TownMain");
         }
     }
 }

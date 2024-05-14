@@ -314,7 +314,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 1078324700}
-  spriteRenderer: {fileID: 1078324697}
   walkSpeed: 10
 --- !u!50 &1078324700
 Rigidbody2D:

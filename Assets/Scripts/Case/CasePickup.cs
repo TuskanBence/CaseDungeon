@@ -16,18 +16,24 @@ public class CasePickup : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
 
-
+            
             // Get the Case component attached to this GameObject
             Case c = gameObject.GetComponent<Case>();
 
-            // Insert the case into the grid
-            InventoryController.instance.InsertCase(c);
+            //Check if player would be over maximum carring capacity. If not pick up case
+            Player p = Player.playerInstance;
+            if (p.currentWeigth + c.caseWeight < p.maxWeigth)
+            {
+                // Insert the case into the grid
+                InventoryController.instance.InsertCase(c);
 
-            // Remove the case from the current room's list of cases
-            RoomController.instance.getCurrentRoom().cases.Remove(c);
+                // Remove the case from the current room's list of cases
+                RoomController.instance.getCurrentRoom().cases.Remove(c);
 
-            // Add the case to the player's inventory
-            Inventory.Instance.Add(c);
+                // Add the case to the player's inventory
+                Inventory.Instance.Add(c);
+                p.currentWeigth += c.caseWeight;
+            }
         }
     }
 }

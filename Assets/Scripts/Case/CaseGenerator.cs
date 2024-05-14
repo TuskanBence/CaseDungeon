@@ -82,12 +82,12 @@ public class CaseGenerator : MonoBehaviour
         CaseData randomCase = new CaseData();
         Array sizes = Enum.GetValues(typeof(Case.Size));
         Array rarities = Enum.GetValues(typeof(Case.Rarity));
-
-        randomCase.caseWeight = UnityEngine.Random.Range(1, 10);
+        
         randomCase.caseSize = (Case.Size)sizes.GetValue(UnityEngine.Random.Range(0, sizes.Length));
+        randomCase.caseWeight = UnityEngine.Random.Range(5, 7)* (int)randomCase.caseSize;
         randomCase.caseRarity = (Case.Rarity)rarities.GetValue(UnityEngine.Random.Range(0, rarities.Length));
         int value = UnityEngine.Random.Range(1, 10);
-        randomCase.caseValue = value * (int)randomCase.caseSize * (int)randomCase.caseRarity * randomCase.caseWeight;
+        randomCase.caseValue = value * (int)randomCase.caseSize * (int)randomCase.caseRarity * 5;
 
         return randomCase;
     }

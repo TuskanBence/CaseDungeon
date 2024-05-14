@@ -73,7 +73,7 @@ public class RoomController : MonoBehaviour
     /// <summary>
     /// The name of the current world.
     /// </summary>
-    string currentWorldName = "Basement";
+    string currentWorldName = "Town";
 
     /// <summary>
     /// Currently loaded rooms info

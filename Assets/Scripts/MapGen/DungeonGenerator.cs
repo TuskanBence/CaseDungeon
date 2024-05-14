@@ -11,6 +11,7 @@ public class DungeonGenerator : MonoBehaviour
     /// The data used for dungeon generation.
     /// </summary>
     public DungeonGenerationData dungeonGenerationData;
+    public string[] potentialMaps;
 
     /// <summary>
     /// The list of room locations in the dungeon.
@@ -26,7 +27,13 @@ public class DungeonGenerator : MonoBehaviour
         dungeonRooms = DungeonCrawlerController.GenerateDungeon(dungeonGenerationData);
         SpawnRooms(dungeonRooms);
     }
-
+    private string SelectRoom()
+    {
+        // Generate a random index within the bounds of the array
+        int index = Random.Range(0, potentialMaps.Length);
+        // Retrieve the random item from the array
+        return potentialMaps[index];
+    }
     /// <summary>
     /// Spawns rooms based on the provided room locations.
     /// </summary>
@@ -39,7 +46,7 @@ public class DungeonGenerator : MonoBehaviour
         // Load empty rooms based on the generated room locations
         foreach (Vector2Int roomLocation in rooms)
         {
-            RoomController.instance.LoadRoom(new RoomInfo("Empty", roomLocation.x, roomLocation.y));
+            RoomController.instance.LoadRoom(new RoomInfo("Shrine", roomLocation.x, roomLocation.y));
         }
     }
 }

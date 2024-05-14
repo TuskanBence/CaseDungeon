@@ -9,18 +9,30 @@ EditorBuildSettings:
     path: Assets/Scenes/DungeonRooms/MainMenu.unity
     guid: 5c2a4ae953481dc42adf7be3cd710592
   - enabled: 1
-    path: Assets/Scenes/DungeonRooms/BasementMain.unity
+    path: Assets/Scenes/DungeonRooms/TownMain.unity
     guid: a2be2a4db6e375a4bad50678536653bd
   - enabled: 1
-    path: Assets/Scenes/DungeonRooms/BasementEnd.unity
+    path: Assets/Scenes/DungeonRooms/TownEnd.unity
     guid: 61252a592f2546e4a89e6dc5b06c59e3
   - enabled: 1
-    path: Assets/Scenes/DungeonRooms/BasementEmpty.unity
+    path: Assets/Scenes/DungeonRooms/TownFlowerField.unity
     guid: 445719c6810505840b993d95001ab1d9
   - enabled: 1
-    path: Assets/Scenes/DungeonRooms/BasementStart.unity
+    path: Assets/Scenes/DungeonRooms/TownStart.unity
     guid: e1f9f8fb29d5a0040a6d83ff85f2f668
   - enabled: 1
     path: Assets/Scenes/DungeonRooms/UpgradeRoom.unity
     guid: ed518c81dfecf1545acab8d9033a24b4
+  - enabled: 1
+    path: Assets/Scenes/DungeonRooms/TownSquare.unity
+    guid: 0360422104e75af4486fe8ad4e8f415b
+  - enabled: 1
+    path: Assets/Scenes/DungeonRooms/TownCementery.unity
+    guid: 9d3023a2c625eb94db3d05174b6cae86
+  - enabled: 1
+    path: Assets/Scenes/DungeonRooms/TownShrine.unity
+    guid: 09936c1a4b3fcfe4880c4165d20fe4de
+  - enabled: 1
+    path: Assets/Scenes/DungeonRooms/TownForest.unity
+    guid: 78a23bcf4e5c8f447a94c895a37f9f8e
   m_configObjects: {}

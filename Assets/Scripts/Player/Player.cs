@@ -15,22 +15,23 @@ public class Player : MonoBehaviour, IDataPersistence
     /// <summary>
     /// The duration of the push effect when colliding with an enemy.
     /// </summary>
-    [SerializeField] public float pushDuration;
+    public float pushDuration;
 
     /// <summary>
     /// The force applied during the push effect when colliding with an enemy.
     /// </summary>
-    [SerializeField] public float pushForce;
+     public float pushForce;
 
     /// <summary>
     /// Reference to the player health bar slider.
     /// </summary>
-    [SerializeField] public Slider healtBar;
+    public Slider healtBar;
+     public TextMeshProUGUI weigthText;
 
     /// <summary>
     /// Reference to the death text.
     /// </summary>
-    [SerializeField] public TextMeshProUGUI deathtext;
+    public TextMeshProUGUI deathtext;
 
     /// <summary>
     /// The maximum health of the player.
@@ -42,6 +43,15 @@ public class Player : MonoBehaviour, IDataPersistence
     /// </summary>
     public int currentHealth { get; set; }
 
+    /// <summary>
+    /// The maximum carrying capacity of the player.
+    /// </summary>
+    public int maxWeigth { get; set; }
+
+    /// <summary>
+    /// The current weigth if cases carried by the player.
+    /// </summary>
+    public int currentWeigth { get; set; }
     /// <summary>
     /// The amount of money the player currently has.
     /// </summary>
@@ -111,8 +121,14 @@ public class Player : MonoBehaviour, IDataPersistence
             SellAllCases();
             InventoryController.instance.UpdateMoney(currentMoney);
         }
+        UpdateWeigth();
     }
 
+    public void UpdateWeigth()
+    {
+        weigthText.text = currentWeigth + "/" + maxWeigth + "kg";
+            
+    }
     /// <summary>
     /// Sells all cases in the player's inventory.
     /// </summary>
@@ -127,6 +143,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 if (currentCase != null)
                 {
                     currentMoney += currentCase.caseValue;
+                    currentWeigth -= currentCase.caseWeight;
                     Inventory.Instance.cases.Remove(currentCase);
                     InventoryController.instance.selectedItemGrid.CleanGridReference(currentCase);
                     // Destroy the game object
@@ -256,6 +273,8 @@ public class Player : MonoBehaviour, IDataPersistence
         currentMoney = data.playerMoney;
         setMaxHealth(maxHealth);
         setCurerntHealth(currentHealth);
+        maxWeigth = data.playerMaxWeigth;
+        currentWeigth = data.playerCurrentWeigth;
     }
 
     /// <summary>
@@ -269,5 +288,7 @@ public class Player : MonoBehaviour, IDataPersistence
         data.playerDamage = damage;
         data.playerRange = range;
         data.playerMoney = currentMoney;
+        data.playerMaxWeigth = maxWeigth;
+        data.playerCurrentWeigth = currentWeigth;   
     }
 }

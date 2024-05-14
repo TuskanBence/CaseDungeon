@@ -40,10 +40,10 @@ public class LoadGame : MonoBehaviour
 
     /// <summary>
     /// Called when the "Load Game" button is clicked.
-    /// Loads the specified scene ("BasementMain") to start or continue the game.
+    /// Loads the specified scene ("TownMain") to start or continue the game.
     /// </summary>
     public void LoadGameOnClick()
     {
-        SceneManager.LoadScene("BasementMain");
+        SceneManager.LoadScene("TownMain");
     }
 }

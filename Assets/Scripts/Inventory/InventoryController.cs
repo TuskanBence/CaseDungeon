@@ -130,10 +130,10 @@ public class InventoryController : MonoBehaviour
         {
             ShowInventory(InventoryActive);
         }
-
         // If the inventory is not active, return.
         if (!InventoryActive)
         {
+            Tooltip.tooltipinstance.HideTip();
             return;
         }
 
@@ -148,7 +148,6 @@ public class InventoryController : MonoBehaviour
 
         // Handle the highlighting of cases based on the cursor position.
         HandleHighlightCase();
-
         // Handle left mouse button press.
         if (Input.GetMouseButtonDown(0))
         {
@@ -162,7 +161,7 @@ public class InventoryController : MonoBehaviour
     /// <param name="amount">The current amount of money.</param>
     public void UpdateMoney(int amount)
     {
-        money.text = "Money: " + amount;
+        money.text =": " +amount.ToString();
     }
 
     /// <summary>
@@ -237,18 +236,21 @@ public class InventoryController : MonoBehaviour
             // Show or hide the highlighter based on whether a case is under the cursor.
             if (CaseToHighlight != null)
             {
+                Tooltip.tooltipinstance.ShowTip($"Weigth:{CaseToHighlight.caseWeight} \nValue:{CaseToHighlight.caseValue}", Input.mousePosition);
                 inventoryHighligth.Show(true);
                 inventoryHighligth.SetSize(CaseToHighlight);
                 inventoryHighligth.SetPosition(selectedItemGrid, CaseToHighlight);
             }
             else
             {
+                Tooltip.tooltipinstance.HideTip();
                 inventoryHighligth.Show(false);
             }
         }
         // If a case is selected, show its highlighter and handle its positioning.
         else
         {
+            Tooltip.tooltipinstance.HideTip();
             inventoryHighligth.Show(selectedItemGrid.BoundryCheck(positionOnGrid.x, positionOnGrid.y, (int)selectedCase.caseSize, (int)selectedCase.caseSize));
             inventoryHighligth.SetSize(selectedCase);
             inventoryHighligth.SetPosition(selectedItemGrid, selectedCase, positionOnGrid.x, positionOnGrid.y);
@@ -269,6 +271,7 @@ public class InventoryController : MonoBehaviour
         else
         {
             PlaceCase(tileGridPosition);
+            CaseToHighlight = null;
         }
     }
 
@@ -293,7 +296,7 @@ public class InventoryController : MonoBehaviour
 
     /// <summary>
     /// Places the selected case on the inventory grid.
-    /// If clicked outside the grid remove case from grig
+    /// If clicked outside the grid remove case from grid
     /// </summary>
     /// <param name="tileGridPosition">The position on the tile grid.</param>
     private void PlaceCase(Vector2Int tileGridPosition)
@@ -306,6 +309,7 @@ public class InventoryController : MonoBehaviour
             RoomController.instance.getCurrentRoom().cases.Add(selectedCase);
             Inventory.Instance.Remove(selectedCase);
             selectedItemGrid.CleanGridReference(selectedCase);
+            Player.playerInstance.currentWeigth -= selectedCase.caseWeight;
             selectedCase = null;
 
             return;
